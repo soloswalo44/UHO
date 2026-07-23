@@ -1,10 +1,9 @@
 http:
   port: "8081"
 
-database:
-  uhub:
-    host: "oracle-58801-0.cloudclusters.net"
-    port: "15406"
-    user: "uhubdevuser"
-    password: "![z86pbR0Lg/Ok6YMnxmYGEg==]"
-    instance: "XE"
+jms:
+  who.broker.url: "tcp://localhost:61616"
+  who.username: "admin"
+  who.password: "![qbNVHoyilMguV3wOS45CFQ==]"
+  who.covid.case.queue: "Q.WHO.COVID.CASE.REPORT"
+    

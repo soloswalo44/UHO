@@ -1,0 +1,58 @@
+#%RAML 1.0 Library
+usage: Types for who-sapi
+types:
+  report-covid-case-request-type:
+    type: object
+    description: This type used to register and update covid case
+    properties:
+      caseType: 
+        type: string
+        required: true
+        example: "positive"
+      firstName: 
+        type: string
+        required: true
+        example: "John"
+      lastName: 
+        type: string
+        required: true
+        example: "Nixon"
+      phone: 
+        type: string
+        required: true
+      email: 
+        type: string
+        required: false
+        example: "john@gmail.com"
+      dateOfBirth:
+        type: date-only
+        required: true
+        example: "1989-04-26"
+      country: 
+        type: string
+        required: true
+        example: "USA"
+  report-covid-case-response-type:
+    description: This type used to respond back the success status
+    type: object
+    properties:
+      code:
+        type: integer
+        description: status code
+        required: true 
+      message:
+        description: A human readable message that describes the status
+        type: string
+        required: true
+      description:
+        description: A human readable, comprehensive explanation of the status
+        type: string
+        required: false
+      dateTime:
+        description: The date-time stamp of the response
+        type: datetime
+        required: true
+      transactionId:
+        description: Internal identifier of the transaction
+        type: string
+        required: true

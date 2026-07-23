@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
-	xmlns:db="http://www.mulesoft.org/schema/mule/db"
-	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
-	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd 
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd 
 http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
-	<http:listener-config name="uhub-sapi-httpListenerConfig" basePath="covid">
-        <http:listener-connection host="0.0.0.0" port="${secure::http.port}" />
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="9eaa6648-18f6-442b-a849-80a7045cc186" file="${env}.yaml" key="${enc.key}" />
+	<http:listener-config name="who-sapi-httpListenerConfig" basePath="covid">
+        <http:listener-connection host="0.0.0.0" port="${http.port}" />
     </http:listener-config>
-    <apikit:config name="uhub-sapi-config" api="uhub-sapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="aaa8e37c-89a0-48d0-bdf3-60132f8b13d4" file="${env}.yaml" key="${enc.key}" />
-	<db:config name="Uhub_Database_Config" doc:name="Database Config" doc:id="1be94849-0091-4739-b50f-0d864d4a2d0a" >
-		<db:oracle-connection host="${secure::database.uhub.host}" user="${secure::database.uhub.user}" password="${secure::database.uhub.password}" instance="${secure::database.uhub.instance}" port="${secure::database.uhub.port}"/>
-	</db:config>
-	<api-gateway:autodiscovery apiId="${api.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="227cfad4-60eb-4810-8b53-8607edd57271" flowRef="uhub-sapi-main" /> 
-</mule>
+    <apikit:config name="who-sapi-config" api="who-sapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <jms:config name="JMS_UHO_Config" doc:name="JMS Config" doc:id="53bbf26c-bb8a-4559-823e-a164020e418f" >
+		<jms:active-mq-connection username="${secure::jms.who.username}" password="${secure::jms.who.password}">
+			<jms:caching-strategy >
+				<jms:no-caching />
+			</jms:caching-strategy>
+			<jms:factory-configuration brokerUrl="${secure::jms.who.broker.url}" />
+		</jms:active-mq-connection>
+	</jms:config>
+<!-- 	<api-gateway:autodiscovery apiId="${instance.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="56252fd6-2124-4103-a5db-a2c888963480" flowRef="who-sapi-main" />
+ --></mule>
